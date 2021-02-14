@@ -69,9 +69,9 @@ def page_edit(driver, data, index=0):
         new_main_img_confirm = driver.find_element_by_id("cke_133_label")
         new_main_img_confirm.click()
         if os.path.getsize(os.getcwd() + f"\\kyu_img\\{data['media'].split('/')[-1]}") > 3000000:
-            time.sleep(15)
+            time.sleep(10)
         else:
-            time.sleep(1.0)
+            time.sleep(5)
         new_main_img_information = driver.find_element_by_id("cke_info_129")
         new_main_img_information.click()
         time.sleep(1.5)
@@ -365,11 +365,16 @@ def folder_edit(driver, data):
     time.sleep(0.5)
     new_main_textbox = driver.find_element_by_xpath("//*[@id=\"cke_1_contents\"]/textarea")
 
+    try:
+        comment = data['comment']
+    except:
+        comment = "" 
+
     codes = data['link'].split('/')[-1].upper()
 
-    if data['jp name'] != '---':
+    if data['en name'] != '---':
         if is_japan(data['loc']):
-            new_main_textbox.send_keys(f"<h2>{data['group1']} {data['group2']} {codes}</h2><h4>{data['jp name']}</h4> \
+            new_main_textbox.send_keys(f"<h2>{data['group1']} {data['group2']} {codes}</h2>&nbsp;<p>{comment}</p>&nbsp;<h4>{data['jp name']}</h4> \
             <h3>{data['en name']}</h3><p><strong>Phylum</strong><br />{data['Division']}<br /><strong>Class</strong><br />{data['Class']}</p><br />&nbsp;<table align=\"center\"> \
             <tbody><tr><th>Prefecture</th><td>{data['loc']}</td><th>Use of Microscope</th><td>{data['microscope']}</td></tr> \
             <tr><th>Region</th><td>{data['region']}</td><th>Use of Automatic Shooting Devices</th><td>{data['automatic']}</td></tr> \
@@ -379,7 +384,7 @@ def folder_edit(driver, data):
             <tr><th>Copyright Holder</th><td>{data['copy']}</td><th>Shooting Speed</th><td>{data['speed']}</td></tr></tbody></table><br />\
             <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page_index}/{data['code']}.html\">in English</a>")
         else:
-            new_main_textbox.send_keys(f"<h2>{data['group1']} {data['group2']} {codes}</h2><h4>{data['jp name']}</h4> \
+            new_main_textbox.send_keys(f"<h2>{data['group1']} {data['group2']} {codes}</h2>&nbsp;<p>{comment}</p>&nbsp;<h4>{data['jp name']}</h4> \
             <h3>{data['en name']}</h3><p><strong>Phylum</strong><br />{data['Division']}<br /><strong>Class</strong><br />{data['Class']}</p><br />&nbsp;<table align=\"center\"> \
             <tbody><tr><th>Country</th><td>{data['loc']}</td><th>Use of Microscope</th><td>{data['microscope']}</td></tr> \
             <tr><th>Region</th><td>{data['region']}</td><th>Use of Automatic Shooting Devices</th><td>{data['automatic']}</td></tr> \
@@ -391,7 +396,7 @@ def folder_edit(driver, data):
 
     else:
         if is_japan(data['loc']):
-            new_main_textbox.send_keys(f"<h2>{data['group1']} {data['group2']} {codes}</h2><br /><table align=\"center\"> \
+            new_main_textbox.send_keys(f"<h2>{data['group1']} {data['group2']} {codes}</h2>&nbsp;<p>{comment}</p>&nbsp;<br /><table align=\"center\"> \
             <tbody><tr><th>Prefecture</th><td>{data['loc']}</td><th>Use of Microscope</th><td>{data['microscope']}</td></tr> \
             <tr><th>Region</th><td>{data['region']}</td><th>Use of Automatic Shooting Devices</th><td>{data['automatic']}</td></tr> \
             <tr><th>Shooting Date</th><td>{data['date']}</td><th>Use of Fluorescent Probe</th><td>{data['ultraviolet']}</td></tr> \
@@ -400,7 +405,7 @@ def folder_edit(driver, data):
             <tr><th>Copyright Holder</th><td>{data['copy']}</td><th>Shooting Speed</th><td>{data['speed']}</td></tr></tbody></table><br />\
             <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page_index}/{data['code']}.html\">in English</a>")
         else:
-            new_main_textbox.send_keys(f"<h2>{data['group1']} {data['group2']} {codes}</h2><br /><table align=\"center\"> \
+            new_main_textbox.send_keys(f"<h2>{data['group1']} {data['group2']} {codes}</h2>&nbsp;<p>{comment}</p>&nbsp;<br /><table align=\"center\"> \
             <tbody><tr><th>Country</th><td>{data['loc']}</td><th>Use of Microscope</th><td>{data['microscope']}</td></tr> \
             <tr><th>Region</th><td>{data['region']}</td><th>Use of Automatic Shooting Devices</th><td>{data['automatic']}</td></tr> \
             <tr><th>Shooting Date</th><td>{data['date']}</td><th>Use of Fluorescent Probe</th><td>{data['ultraviolet']}</td></tr> \
@@ -452,11 +457,11 @@ def many_page_edit(driver, data):
     data_path = f"\\kyu_img\\{data.upper()}"+".jpg"
     upload_thumb = driver.find_element_by_xpath("//*[@id=\"container\"]/form/table[1]/tbody/tr[9]/td/input[2]")
     if os.path.getsize(os.getcwd() + data_path) > 3000000:
-        upload_thumb.send_keys(os.getcwd() + data_path[:4] + "_resized.jpg")
-        time.sleep(1.0)
+        upload_thumb.send_keys(os.getcwd() + f"\\kyu_img\\{data.upper()}" + "_resized.jpg")
+        time.sleep(10)
     else:
         upload_thumb.send_keys(os.getcwd() + data_path)
-        time.sleep(1.0)
+        time.sleep(5)
 
     new_file.send_keys(data)
     new_title.send_keys(data.upper())
@@ -606,95 +611,41 @@ if __name__ == "__main__":
         time.sleep(0.5)
 
         title_sib_list = driver.find_elements_by_class_name("ctlr-line")
-        try:
-            page_num = int(driver.find_element_by_xpath("//*[@id=\"container\"]/div[3]/span").text.split(':')[-1][:-1])
-            page_num = int(page_num/25) + 1
-            cur_url = driver.current_url.split('=')[1][0:4]
-            title_sib_list = []
-            for i in range(1, page_num+1):
-                tourl = f"https://www.sci.kyoto-u.ac.jp/ja/admin/contents/?pageno={i}&parentcode={cur_url}"
-                driver.get(tourl)
-                time.sleep(0.3)
-                title_list = driver.find_elements_by_class_name("ctlr-line")
-                for j, t in enumerate(title_list):
-                    txt = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{j+2}]/td[3]").text#.split('.')[0]
-                    #if len(txt) > 6:
-                    #    title_sib_list.append(txt.split('/')[0])
-                    #else:
-                    title_sib_list.append(txt)
-            print(f"Found {len(title_sib_list)} lists")
-            for t in title_sib_list:
-                filtered_data = check_data(t, filtered_data)
-            for i, (j, d) in enumerate(filtered_data.iterrows()):
-                link = d['link']
-                ty = d['media']
-                code = link.split('/')[-1]
-                codelen = len(code)
-                if len(code) > 6:
-                    codes = code.split('-')
-                    folder_edit(driver, d)
-                    if i > 24:
-                        ii = i%25
-                        pp = int(i/25)
-                        pp_btn = driver.find_element_by_xpath(f"//*[@id=\"container\"]/div[4]/ul/li[{2+pp}]/a")
-                        pp_btn.click()
-                        btn = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{2+ii}]/td[7]/input[2]")
-                        btn.click()
-                        for c in codes:
-                            many_page_edit(driver, c)
-                    else:
-                        if driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[4]/td[4]").text.split('/')[0] == 'trash3':
-                            btn = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{5+i}]/td[7]/input[2]")
-                            btn.click()
-                        else:
-                            btn = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{2+i}]/td[7]/input[2]")
-                            btn.click()
-                        for c in codes:
-                            many_page_edit(driver, c)
-                else:
-                    page_edit(driver, d)
-                tourl = f"https://www.sci.kyoto-u.ac.jp/ja/admin/contents/?pageno=&parentcode={cur_url}"
-                driver.get(tourl)
 
-        except common.exceptions.NoSuchElementException:
-            cur_url = driver.current_url
-            title_list = driver.find_elements_by_class_name("ctlr-line")
-            title_sib_list = []
-            for j, t in enumerate(title_list):
-                txt = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{j+2}]/td[4]").text.split('.')[0]
-                if len(txt) > 6:
-                    title_sib_list.append(txt.split('/')[0])
+        cur_url = driver.current_url
+        title_list = driver.find_elements_by_class_name("ctlr-line")
+        for i, (j, d) in enumerate(filtered_data.iterrows()):
+            i = i
+            if i < 5:
+                continue
+            link = d['link']
+            ty = d['media']
+            code = link.split('/')[-1]
+            codelen = len(code)
+            if len(code) > 6:
+                codes = code.split('-')
+                folder_edit(driver, d)
+                if i > 24:
+                    ii = i%25
+                    pp = int(i/25)
+                    pp_url = f"https://www.sci.kyoto-u.ac.jp/en/admin/contents/?pageno={pp+1}&parentcode=2286"
+                    driver.get(pp_url)
+                    btn = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{2+ii}]/td[7]/input[2]")
+                    btn.click()
+                    for c in codes:
+                        many_page_edit(driver, c)
                 else:
-                    title_sib_list.append(txt)
-            for t in title_sib_list:
-                filtered_data = check_data(t, filtered_data)
-            print(filtered_data.info())
-            for i, (j, d) in enumerate(filtered_data.iterrows()):
-                i = i# + 1
-                link = d['link']
-                ty = d['media']
-                code = link.split('/')[-1]
-                codelen = len(code)
-                if len(code) > 6:
-                    codes = code.split('-')
-                    folder_edit(driver, d)
-                    if i > 24:
-                        ii = i%25
-                        pp = int(i/25)
-                        pp_btn = driver.find_element_by_xpath(f"//*[@id=\"container\"]/div[4]/ul/li[{2+pp}]/a")
-                        pp_btn.click()
-                        btn = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{2+ii}]/td[7]/input[2]")
-                        btn.click()
-                        for c in codes:
-                            many_page_edit(driver, c)
-                    else:
-                        btn = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{2+i}]/td[7]/input[2]")
-                        btn.click()
-                        for c in codes:
-                            many_page_edit(driver, c)
-                else:
-                    page_edit(driver, d)
-                driver.get(cur_url)
+                    btn = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{2+i}]/td[7]/input[2]")
+                    btn.click()
+                    for c in codes:
+                        many_page_edit(driver, c)
+            else:
+                page_edit(driver, d)
+            driver.get(cur_url)
+
+        back = driver.find_element_by_xpath("//*[@id=\"container\"]/div[1]/span[3]/a")
+        back.click()
+        time.sleep(0.5)
 
         back = driver.find_element_by_xpath("//*[@id=\"container\"]/div[1]/span[3]/a")
         back.click()
@@ -704,39 +655,3 @@ if __name__ == "__main__":
         if a == "n":
             driver.quit()
             break
-"""
-        try:
-            page_num = int(driver.find_element_by_xpath("//*[@id=\"container\"]/div[4]/span").text[0])
-            for i in range(3, page_num+2):
-                title_sib_list = driver.find_elements_by_class_name("ctlr-line")
-                for j in range(2, len(title_sib_list)+2):
-                    title_sib_title = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{j}]/td[3]")
-                    t = title_sib_title.text
-                    for k, d in data_temp.iterrows():
-                        if d['title'] == t:
-                            title_sib_edit = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{j}]/td[7]/input")
-                            title_sib_edit.click()
-                            time.sleep(0.5)
-                            page_edit(driver, d, page_index)
-
-                next_page = driver.find_element_by_xpath(f"//*[@id=\"container\"]/div[4]/ul/li[{i}]")
-                next_page.click()
-                time.sleep(0.5)
-
-            title_sib_list = driver.find_elements_by_class_name("ctlr-line")
-            for j in range(2, len(title_sib_list)+2):
-                title_sib_title = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{j}]/td[3]")
-                t = title_sib_title.text
-                for k, d in data_temp.iterrows():
-                    if d['title'] == t:
-                        title_sib_edit = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{j}]/td[7]/input")
-                        title_sib_edit.click()
-                        time.sleep(0.5)
-                        page_edit(driver, d, page_index)
-
-            first_page = driver.find_element_by_xpath(f"//*[@id=\"container\"]/div[4]/ul/li[2]")
-            first_page.click()
-
-        except:
-"""
-

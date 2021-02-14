@@ -176,7 +176,7 @@ def login(driver, userid, userpw):
     sci_admin_login = driver.find_element_by_xpath("/html/body/form/div/input")
     sci_admin_login.click()
 
-def page_edit(driver, data):
+def page_edit(driver, data, index=0):
     new_page_btn = driver.find_element_by_xpath("//*[@id=\"container\"]/div[2]/form/input")
     new_page_btn.click()
 
@@ -190,7 +190,7 @@ def page_edit(driver, data):
     new_hidtext = driver.find_element_by_name("cts_hideindexflag")
     new_main_src = driver.find_element_by_xpath("//*[@id=\"cke_14\"]")
     new_main_img = driver.find_element_by_xpath("//*[@id=\"cke_51\"]")
-    new_back = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input[1]")
+    #new_back = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input[1]")
     new_confirm = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input[2]")
 
     upload_thumb = driver.find_element_by_xpath("//*[@id=\"container\"]/form/table[1]/tbody/tr[9]/td/input[2]")
@@ -198,10 +198,14 @@ def page_edit(driver, data):
         upload_thumb.send_keys(os.getcwd() + f"/kyu_img/{data.at[0, 'media'].split('/')[-1]}")
     elif data.at[0, 'datatype'] == "movie":
         upload_thumb.send_keys(os.getcwd() + f"/kyu_img/{data.at[0, 'code']}" + ".jpg")
-    time.sleep(0.5)
+    time.sleep(1.0)
 
     new_file.send_keys(data.at[0, 'code'])
-    new_title.send_keys(data.at[0, 'title'])
+
+    if len(data.at[0, 'title']) > 100:
+        new_title.send_keys(data.at[0, 'title'][:100])
+    else:
+        new_title.send_keys(data.at[0, 'title'])
     new_inschool.click()
     new_hidtop.click()
     new_hidtag.click()
@@ -235,6 +239,9 @@ def page_edit(driver, data):
     time.sleep(0.5)
     new_main_textbox = driver.find_element_by_xpath("//*[@id=\"cke_1_contents\"]/textarea")
 
+    if index != 0:
+        page = index
+
     try:
         comment = data.at[0, 'comment']
     except:
@@ -251,7 +258,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
                 except:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><img alt=\"\" src=\"{img_link}\" /> &nbsp;<p>{comment}</p> \
                     <h3>{data.at[0, 'Scientific name']}</h3><p><strong>Phylum</strong><br />{data.at[0, 'Division']}<br /><strong>Class</strong><br />{data.at[0, 'Class']}</p><br />&nbsp;<table align=\"center\"> \
@@ -260,7 +268,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
             elif 'Country' in data.columns:
                 try:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><img alt=\"\" src=\"{img_link}\" /> &nbsp;<p>{comment}</p> \
@@ -270,7 +279,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
                 except:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><img alt=\"\" src=\"{img_link}\" /> &nbsp;<p>{comment}</p> \
                     <h3>{data.at[0, 'Scientific name']}</h3><p><strong>Phylum</strong><br />{data.at[0, 'Division']}<br /><strong>Class</strong><br />{data.at[0, 'Class']}</p><br />&nbsp;<table align=\"center\"> \
@@ -279,7 +289,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
             else:
                 new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><img alt=\"\" src=\"{img_link}\" /> &nbsp;<p>{comment}</p> \
                 <h3>{data.at[0, 'Scientific name']}</h3><p><strong>Phylum</strong><br />{data.at[0, 'Division']}<br /><strong>Class</strong><br />{data.at[0, 'Class']}</p><br />&nbsp;<table align=\"center\"> \
@@ -288,7 +299,8 @@ def page_edit(driver, data):
                 <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                 <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                 <tr><th>---</th><td>---</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                <tr><th>---</th><td>---</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                <tr><th>---</th><td>---</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
         else:
             if 'Prefecture' in data.columns:
                 try:
@@ -298,7 +310,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
                 except:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><img alt=\"\" src=\"{img_link}\" /> &nbsp;<p>{comment}</p><br /><table align=\"center\"> \
                     <tbody><tr><th>Prefecture</th><td>{data.at[0, 'Prefecture']}</td><th>Use of Microscope</th><td>{data.at[0, 'Use of Microscope']}</td></tr> \
@@ -306,7 +319,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
             elif 'Country' in data.columns:
                 try:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><img alt=\"\" src=\"{img_link}\" /> &nbsp;<p>{comment}</p><br /><table align=\"center\"> \
@@ -315,7 +329,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
                 except:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><img alt=\"\" src=\"{img_link}\" /> &nbsp;<p>{comment}</p><br /><table align=\"center\"> \
                     <tbody><tr><th>Country</th><td>{data.at[0, 'Country']}</td><th>Use of Microscope</th><td>{data.at[0, 'Use of Microscope']}</td></tr> \
@@ -323,7 +338,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")                    
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")                    
             else:
                 new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><img alt=\"\" src=\"{img_link}\" /> &nbsp;<p>{comment}</p><br /><table align=\"center\"> \
                 <tbody><tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Microscope</th><td>{data.at[0, 'Use of Microscope']}</td></tr> \
@@ -331,7 +347,8 @@ def page_edit(driver, data):
                 <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                 <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                 <tr><th>---</th><td>---</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                <tr><th>---</th><td>---</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                <tr><th>---</th><td>---</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
     elif data.at[0, 'datatype'] == 'movie':
         if 'Scientific name' in data.columns:
             if 'Prefecture' in data.columns:
@@ -344,7 +361,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
                 except:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><div class=\"kaltura\"><iframe frameborder=\"0\" height=\"544\" id=\"kaltura_player\" \
                     src=\"{data.at[0, 'media']}\" title=\"Kaltura Player\" width=\"912\"></iframe></div> &nbsp;<p>{comment}</p> \
@@ -354,7 +372,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
             elif 'Country' in data.columns:
                 try:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><div class=\"kaltura\"><iframe frameborder=\"0\" height=\"544\" id=\"kaltura_player\" \
@@ -365,7 +384,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
                 except:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><div class=\"kaltura\"><iframe frameborder=\"0\" height=\"544\" id=\"kaltura_player\" \
                     src=\"{data.at[0, 'media']}\" title=\"Kaltura Player\" width=\"912\"></iframe></div> &nbsp;<p>{comment}</p> \
@@ -375,7 +395,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")                    
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")                    
             else:
                 new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><div class=\"kaltura\"><iframe frameborder=\"0\" height=\"544\" id=\"kaltura_player\" \
                 src=\"{data.at[0, 'media']}\" title=\"Kaltura Player\" width=\"912\"></iframe></div> &nbsp;<p>{comment}</p> \
@@ -385,7 +406,8 @@ def page_edit(driver, data):
                 <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                 <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                 <tr><th>---</th><td>---</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                <tr><th>---</th><td>---</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                <tr><th>---</th><td>---</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
         else:
             if 'Prefecture' in data.columns:
                 try:
@@ -396,7 +418,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
                 except:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><div class=\"kaltura\"><iframe frameborder=\"0\" height=\"544\" id=\"kaltura_player\" \
                     src=\"{data.at[0, 'media']}\" title=\"Kaltura Player\" width=\"912\"></iframe></div> &nbsp;<p>{comment}</p><br /><table align=\"center\"> \
@@ -405,7 +428,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")                    
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")                    
             elif 'Country' in data.columns:
                 try:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><div class=\"kaltura\"><iframe frameborder=\"0\" height=\"544\" id=\"kaltura_player\" \
@@ -415,7 +439,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
                 except:
                     new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><div class=\"kaltura\"><iframe frameborder=\"0\" height=\"544\" id=\"kaltura_player\" \
                     src=\"{data.at[0, 'media']}\" title=\"Kaltura Player\" width=\"912\"></iframe></div> &nbsp;<p>{comment}</p><br /><table align=\"center\"> \
@@ -424,7 +449,8 @@ def page_edit(driver, data):
                     <tr><th>Shooting Date</th><td>{data.at[0, 'Shooting Date']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                     <tr><th>Shooting Time</th><td>{data.at[0, 'Shooting Time']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                     <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                    <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                    <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
             else:
                 new_main_textbox.send_keys(f"<h2>{data.at[0, 'group1']} {data.at[0, 'group2']} {str.upper(data.at[0, 'code'])}</h2><div class=\"kaltura\"><iframe frameborder=\"0\" height=\"544\" id=\"kaltura_player\" \
                 src=\"{data.at[0, 'media']}\" title=\"Kaltura Player\" width=\"912\"></iframe></div> &nbsp;<p>{comment}</p><br /><table align=\"center\"> \
@@ -433,7 +459,8 @@ def page_edit(driver, data):
                 <tr><th>Photographer</th><td>{data.at[0, 'Photographer']}</td><th>Use of Fluorescent Probe</th><td>{data.at[0, 'Use of Fluorescent Probe']}</td></tr> \
                 <tr><th>Copyright Holder</th><td>{data.at[0, 'Copyright Holder']}</td><th>Use of Infrared</th><td>{data.at[0, 'Use of Infrared']}</td></tr> \
                 <tr><th>---</th><td>---</td><th>Shooting Interval (Sec.)</th><td>{data.at[0, 'Shooting Interval (Sec.)']}</td></tr> \
-                <tr><th>---</th><td>---</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table>")
+                <tr><th>---</th><td>---</td><th>Shooting Speed</th><td>{data.at[0, 'Shooting Speed']}</td></tr></tbody></table><br /> \
+                <a href=\"http://www.sci.kyoto-u.ac.jp/ja/research/kyutubebio/{page}/{data.at[0, 'code']}.html\">In Japanese</a>")
     new_main_src.click()
     time.sleep(1.0)
 
@@ -527,6 +554,7 @@ if __name__ == "__main__":
         print("15\tEthology\t\t16\tAnimal Ecology\t\t17\tDevelopmental Biology and Genome Biology")
         print("18\tStress Response Biology\t19\tPhysical Anthropology\t\t20\tHuman Evolution Studies")
         i = int(input("Choose INDEX number : "))
+        page_index = 2889 + i
         title = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{i}]/td[3]")
         title_text = title.text
         data_temp = []
@@ -551,7 +579,7 @@ if __name__ == "__main__":
                             title_sib_edit = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{j}]/td[7]/input")
                             title_sib_edit.click()
                             time.sleep(0.5)
-                            page_edit(driver, d)
+                            page_edit(driver, d, page_index)
 
                 next_page = driver.find_element_by_xpath(f"//*[@id=\"container\"]/div[4]/ul/li[{i}]")
                 next_page.click()
@@ -566,7 +594,7 @@ if __name__ == "__main__":
                         title_sib_edit = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{j}]/td[7]/input")
                         title_sib_edit.click()
                         time.sleep(0.5)
-                        page_edit(driver, d)
+                        page_edit(driver, d, page_index)
 
             first_page = driver.find_element_by_xpath(f"//*[@id=\"container\"]/div[4]/ul/li[2]")
             first_page.click()
@@ -583,11 +611,11 @@ if __name__ == "__main__":
                 if len(data_temp) != 0:
                     for k, t in enumerate(data_temp):
                         print(f"{t.at[0, 'title']} doesn't exist.")
-                        page_edit(driver, t)
+                        page_edit(driver, t, page_index)
             elif len(title_sib_list) == 0:
                 for k, t in enumerate(data_temp):
                     print(f"{t.at[0, 'title']} doesn't exist.")
-                    page_edit(driver, t)
+                    page_edit(driver, t, page_index)
             back = driver.find_element_by_xpath("//*[@id=\"container\"]/div[1]/span[3]/a")
             back.click()
             time.sleep(0.5)
