@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import re
 import chromedriver_binary
 import urllib3, time
 from urllib3.exceptions import InsecureRequestWarning
@@ -19,35 +20,37 @@ def page_edit(driver, page_num):
 
     edit_part = article[-40:].split("/")
     if len(edit_part[1]) == 4:
-        print(edit_part)
         driver.back()
         return
     else:
         edit_part[1] = page_num
-        print(edit_part)
-        driver.back()
-    """
-    try:
-        new_confirm = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input[3]")
-        new_confirm.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "preview")))
-        new_confirm_confirm = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input[2]")
-        new_confirm_confirm.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "message")))
-        new_confirm_back = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input")
-        new_confirm_back.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "ctlr-list")))
-    except:
-        new_confirm = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input[2]")
-        new_confirm.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "preview")))
-        new_confirm_confirm = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input[2]")
-        new_confirm_confirm.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "message")))
-        new_confirm_back = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input")
-        new_confirm_back.click()
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "ctlr-list")))
-    """
+        edit_part = '/'.join(edit_part)
+        article = article.replace(article[-40:], edit_part)
+        article = re.sub(r"[\r\n]", "", article)
+        article = re.sub(r"[\u3000\t]", "", article)
+        new_main_textbox.clear()
+        new_main_textbox.send_keys(article)
+        new_main_src.click()
+        try:
+            new_confirm = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input[3]")
+            new_confirm.click()
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "preview")))
+            new_confirm_confirm = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input[2]")
+            new_confirm_confirm.click()
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "message")))
+            new_confirm_back = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input")
+            new_confirm_back.click()
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "ctlr-list")))
+        except:
+            new_confirm = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input[2]")
+            new_confirm.click()
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "preview")))
+            new_confirm_confirm = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input[2]")
+            new_confirm_confirm.click()
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "message")))
+            new_confirm_back = driver.find_element_by_xpath("//*[@id=\"container\"]/form/div/input")
+            new_confirm_back.click()
+            WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, "ctlr-list")))
 
 def login(driver, userid, userpw):
     sci_admin_id = driver.find_element_by_name("act_id")
@@ -74,8 +77,8 @@ if __name__ == "__main__":
     pageNum = 0
 
     for i in range(18):
-        #if i < 12:
-        #    continue
+        if i < 8:
+            continue
         viewPath = f"//*[@id=\"container\"]/table/tbody/tr[{3+i}]/td[7]/input[2]"
         viewBtn = driver.find_element_by_xpath(viewPath)
         page_num = driver.find_element_by_xpath(f"//*[@id=\"container\"]/table/tbody/tr[{3+i}]/td[4]").text.split('/')[0]
