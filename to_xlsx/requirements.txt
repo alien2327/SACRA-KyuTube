@@ -1,0 +1,4 @@
+openpyxl
+bs4
+requests
+tqdm
